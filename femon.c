@@ -120,8 +120,13 @@ cOsdObject *cPluginFemon::MainMenuAction(void)
 {
   // Perform the action when selected from the main VDR menu.
   debug1("%s", __PRETTY_FUNCTION__);
+  bool controlActive;
+  {
+    cMutexLock controlMutexLock;
+    controlActive = (cControl::Control(controlMutexLock) != NULL);
+  }
   LOCK_CHANNELS_READ;
-  if (cControl::Control() || (Channels->Count() <= 0))
+  if (controlActive || (Channels->Count() <= 0))
      Skins.Message(mtInfo, tr("Femon not available"));
   else
      return cFemonOsd::Instance(true);
